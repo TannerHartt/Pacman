@@ -98,8 +98,9 @@ const keys = {
         pressed: false
     }
 }
-let lastKeyPressed = '';
+let lastKeyPressed = ''; // To track the previously pressed key.
 
+// Map structure to be generated.
 const map = [
     ['-', '-', '-', '-', '-', '-'],
     ['-', ' ', ' ', ' ', ' ', '-'],
@@ -130,6 +131,7 @@ function animate() {
     requestAnimationFrame(animate);
     ctx.clearRect(0, 0 , canvas.width, canvas.height);
 
+    // Procedurally generate map.
     map.forEach((row, rowIndex) => {
         row.forEach((symbol, symbolIndex) => {
             switch (symbol) {
@@ -152,6 +154,7 @@ function animate() {
     player.velocity.y = 0;
 
 
+    // Dynamic key listeners to support multiple buttons pressed.
     if (keys.w.pressed && lastKeyPressed === 'w') {
         player.velocity.y = -5;
     } else if (keys.a.pressed && lastKeyPressed === 'a') {
