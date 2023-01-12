@@ -14,15 +14,19 @@ addEventListener("keydown", ({key}) => {
     switch (key) {
         case 'w':
             keys.w.pressed = true;
+            lastKeyPressed = 'w';
             break;
         case 's':
             keys.s.pressed = true;
+            lastKeyPressed = 's';
             break;
         case 'a':
             keys.a.pressed = true;
+            lastKeyPressed = 'a';
             break;
         case 'd':
             keys.d.pressed = true;
+            lastKeyPressed = 'd';
             break;
     }
 });
@@ -30,19 +34,15 @@ addEventListener("keyup", ({key}) => {
     switch (key) {
         case 'w':
             keys.w.pressed = false;
-            lastKeyPressed = 'w';
             break;
         case 's':
             keys.s.pressed = false;
-            lastKeyPressed = 's';
             break;
         case 'a':
             keys.a.pressed = false;
-            lastKeyPressed = 'a';
             break;
         case 'd':
             keys.d.pressed = false;
-            lastKeyPressed = 'd';
             break;
     }
 });
