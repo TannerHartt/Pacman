@@ -102,11 +102,11 @@ let lastKeyPressed = ''; // To track the previously pressed key.
 
 // Map structure to be generated.
 const map = [
-    ['-', '-', '-', '-', '-', '-'],
-    ['-', ' ', ' ', ' ', ' ', '-'],
-    ['-', ' ', '-', '-', ' ', '-'],
-    ['-', ' ', ' ', ' ', ' ', '-'],
-    ['-', '-', '-', '-', '-', '-'],
+    ['-', '-', '-', '-', '-', '-', '-'],
+    ['-', ' ', ' ', ' ', ' ', ' ', '-'],
+    ['-', ' ', '-', ' ', '-', ' ', '-'],
+    ['-', ' ', ' ', ' ', ' ', ' ', '-'],
+    ['-', '-', '-', '-', '-', '-', '-'],
 
 ];
 let boundaries = [];
@@ -146,12 +146,25 @@ function animate() {
             }
         });
     });
+
+    // Looping through all the boundaries and drawing them onto the canvas.
     boundaries.forEach((boundary) => {
         boundary.draw();
+
+        // Player and boundary collision detection
+        if (player.position.y - player.radius + player.velocity.y <= boundary.position.y + boundary.height &&
+            player.position.x + player.radius + player.velocity.x >= boundary.position.x &&
+            player.position.y + player.radius + player.velocity.y >= boundary.position.y &&
+            player.position.x - player.radius + player.velocity.x <= boundary.position.x + boundary.width) {
+
+            player.velocity.x = 0;
+            player.velocity.y = 0;
+
+        }
     });
+
     player.update();
-    player.velocity.x = 0;
-    player.velocity.y = 0;
+
 
 
     // Dynamic key listeners to support multiple buttons pressed.
