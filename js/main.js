@@ -125,12 +125,6 @@ const player = new Player({
 function init() {
     boundaries = [];
 
-}
-
-function animate() {
-    requestAnimationFrame(animate);
-    ctx.clearRect(0, 0 , canvas.width, canvas.height);
-
     // Procedurally generate map.
     map.forEach((row, rowIndex) => {
         row.forEach((symbol, symbolIndex) => {
@@ -146,30 +140,24 @@ function animate() {
             }
         });
     });
+}
 
-    // Looping through all the boundaries and drawing them onto the canvas.
-    boundaries.forEach((boundary) => {
-        boundary.draw();
-
-        // Player and boundary collision detection
-        if (player.position.y - player.radius + player.velocity.y <= boundary.position.y + boundary.height &&
-            player.position.x + player.radius + player.velocity.x >= boundary.position.x &&
-            player.position.y + player.radius + player.velocity.y >= boundary.position.y &&
-            player.position.x - player.radius + player.velocity.x <= boundary.position.x + boundary.width) {
-
-            player.velocity.x = 0;
-            player.velocity.y = 0;
-
-        }
-    });
-
-    player.update();
-
-
+function animate() {
+    requestAnimationFrame(animate);
+    ctx.clearRect(0, 0 , canvas.width, canvas.height);
 
     // Dynamic key listeners to support multiple buttons pressed.
     if (keys.w.pressed && lastKeyPressed === 'w') {
-        player.velocity.y = -5;
+        for (let i = 0; i < boundaries.length; i++) {
+            const boundary = boundaries[i]; // Current boundary
+
+            if (playerCollidesWithBoundary({circle: {...player, velocity: { x: 0, y: -5 }}, boundary: boundary})) {
+                player.velocity.y = 0;
+                break;
+            } else {
+                player.velocity.y = -5;
+            }
+        }
     } else if (keys.a.pressed && lastKeyPressed === 'a') {
         player.velocity.x = -5;
     } else if (keys.s.pressed && lastKeyPressed === 's') {
@@ -177,6 +165,29 @@ function animate() {
     } else if (keys.d.pressed && lastKeyPressed === 'd') {
         player.velocity.x = 5;
     }
+
+    // Looping through all the boundaries and drawing them onto the canvas.
+    boundaries.forEach((boundary) => {
+        boundary.draw();
+
+        // Player and boundary collision detection
+        if (playerCollidesWithBoundary({ circle: player, boundary: boundary })) {
+
+            player.velocity.x = 0;
+            player.velocity.y = 0;
+        }
+    });
+
+    player.update();
+
+}
+
+function playerCollidesWithBoundary({ circle, boundary }) {
+    return (
+        circle.position.y - circle.radius + circle.velocity.y <= boundary.position.y + boundary.height &&
+        circle.position.x + circle.radius + circle.velocity.x >= boundary.position.x &&
+        circle.position.y + circle.radius + circle.velocity.y >= boundary.position.y &&
+        circle.position.x - circle.radius + circle.velocity.x <= boundary.position.x + boundary.width)
 }
 
 init();
