@@ -50,15 +50,15 @@ addEventListener("keyup", ({key}) => {
 class Boundary {
     static width = 40;
     static height = 40;
-    constructor({position}) {
+    constructor({ position, image }) {
         this.position = position;
         this.width = Boundary.width;
         this.height = Boundary.height;
+        this.image = image;
     }
 
     draw() {
-        ctx.fillStyle = 'blue';
-        ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
+        ctx.drawImage(this.image, this.position.x, this.position.y);
     }
 }
 
@@ -103,13 +103,16 @@ let lastKeyPressed = ''; // To track the previously pressed key.
 // Map structure to be generated.
 const map = [
     ['-', '-', '-', '-', '-', '-', '-'],
-    ['-', ' ', ' ', ' ', ' ', ' ', '-'],
-    ['-', ' ', '-', ' ', '-', ' ', '-'],
-    ['-', ' ', ' ', ' ', ' ', ' ', '-'],
+    ['|', ' ', ' ', ' ', ' ', ' ', '|'],
+    ['|', ' ', '-', ' ', '-', ' ', '|'],
+    ['|', ' ', ' ', ' ', ' ', ' ', '|'],
+    ['|', ' ', '-', ' ', '-', ' ', '|'],
+    ['|', ' ', ' ', ' ', ' ', ' ', '|'],
     ['-', '-', '-', '-', '-', '-', '-'],
 
 ];
 let boundaries = [];
+
 const player = new Player({
     position: {
         x: Boundary.width + Boundary.width / 2,
@@ -120,6 +123,20 @@ const player = new Player({
         y: 0
      }
 });
+
+function playerCollidesWithBoundary({ circle, boundary }) {
+    return (
+        circle.position.y - circle.radius + circle.velocity.y <= boundary.position.y + boundary.height &&
+        circle.position.x + circle.radius + circle.velocity.x >= boundary.position.x &&
+        circle.position.y + circle.radius + circle.velocity.y >= boundary.position.y &&
+        circle.position.x - circle.radius + circle.velocity.x <= boundary.position.x + boundary.width)
+}
+
+function createImage(src) {
+    const image = new Image();
+    image.src = src;
+    return image;
+}
 
 
 function init() {
@@ -134,9 +151,25 @@ function init() {
                         new Boundary({
                             position: {
                                 x: Boundary.width * symbolIndex,
-                                y: Boundary.height * rowIndex }
-                        }));
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/pipeHorizontal.png')
+                        })
+                    );
                     break;
+
+                case '|':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * symbolIndex,
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/pipeVertical.png')
+                        })
+                    );
+                    break;
+
             }
         });
     });
@@ -159,11 +192,67 @@ function animate() {
             }
         }
     } else if (keys.a.pressed && lastKeyPressed === 'a') {
-        player.velocity.x = -5;
+        for (let i = 0; i < boundaries.length; i++) {
+            const boundary = boundaries[i]; // Current boundary
+
+            // If there is a collision
+            if (playerCollidesWithBoundary({
+                circle: {
+                    ...player,
+                    velocity: {
+                        x: -5,
+                        y: 0
+                    }
+                },
+                boundary: boundary
+            })) {
+                player.velocity.x = 0;
+                break;
+            } else {
+                player.velocity.x = -5;
+            }
+        }
     } else if (keys.s.pressed && lastKeyPressed === 's') {
-        player.velocity.y = 5;
+        for (let i = 0; i < boundaries.length; i++) {
+            const boundary = boundaries[i]; // Current boundary
+
+            if (playerCollidesWithBoundary({
+                circle: {
+                    ...player,
+                    velocity: {
+                        x: 0,
+                        y: 5
+                    }
+                },
+                boundary: boundary
+            })) {
+                player.velocity.y = 0;
+                break;
+            } else {
+                player.velocity.y = 5;
+            }
+        }
     } else if (keys.d.pressed && lastKeyPressed === 'd') {
-        player.velocity.x = 5;
+        for (let i = 0; i < boundaries.length; i++) {
+            const boundary = boundaries[i]; // Current boundary
+
+            if (playerCollidesWithBoundary({
+                circle: {
+                    ...player,
+                    velocity: {
+                        x: 5,
+                        y: 0
+                    }
+                },
+                boundary: boundary
+                })
+            ) {
+                player.velocity.x = 0;
+                break;
+            } else {
+                player.velocity.x = 5;
+            }
+        }
     }
 
     // Looping through all the boundaries and drawing them onto the canvas.
@@ -182,13 +271,6 @@ function animate() {
 
 }
 
-function playerCollidesWithBoundary({ circle, boundary }) {
-    return (
-        circle.position.y - circle.radius + circle.velocity.y <= boundary.position.y + boundary.height &&
-        circle.position.x + circle.radius + circle.velocity.x >= boundary.position.x &&
-        circle.position.y + circle.radius + circle.velocity.y >= boundary.position.y &&
-        circle.position.x - circle.radius + circle.velocity.x <= boundary.position.x + boundary.width)
-}
 
 init();
 animate();
