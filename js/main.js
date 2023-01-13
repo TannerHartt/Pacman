@@ -5,50 +5,6 @@ const scoreEl = document.getElementById('scoreEl');
 canvas.height = innerHeight;
 canvas.width = innerWidth;
 
-addEventListener('resize', () => {
-    canvas.height = innerHeight;
-    canvas.width = innerWidth;
-
-    init();
-});
-
-addEventListener("keydown", ({ key }) => {
-    switch (key) {
-        case 'w':
-            keys.w.pressed = true;
-            lastKeyPressed = 'w';
-            break;
-        case 's':
-            keys.s.pressed = true;
-            lastKeyPressed = 's';
-            break;
-        case 'a':
-            keys.a.pressed = true;
-            lastKeyPressed = 'a';
-            break;
-        case 'd':
-            keys.d.pressed = true;
-            lastKeyPressed = 'd';
-            break;
-    }
-});
-
-addEventListener("keyup", ({ key }) => {
-    switch (key) {
-        case 'w':
-            keys.w.pressed = false;
-            break;
-        case 's':
-            keys.s.pressed = false;
-            break;
-        case 'a':
-            keys.a.pressed = false;
-            break;
-        case 'd':
-            keys.d.pressed = false;
-            break;
-    }
-});
 
 
 const keys = {
@@ -85,10 +41,17 @@ const map = [
 
 let boundaries = [];
 let pellets = [];
-let lastKeyPressed = ''; // To track the previously pressed key.
 let score = 0;
-let ghosts = [];
-
+let ghosts = [new Ghost({
+    position: {
+        x: (Boundary.width * 6) + Boundary.width / 2,
+        y: Boundary.height + Boundary.height / 2
+    },
+    velocity: {
+        x: 3,
+        y: 0
+    }
+})];
 
 const player = new Player({
     position: {
@@ -100,31 +63,6 @@ const player = new Player({
         y: 0
      }
 });
-
-/**
- * This function checks collisions between two objects within the canvas and returns a boolean.
- * @param circle The circular object to track (Player).
- * @param boundary The rectangular object to track (Boundaries).
- * @returns {boolean} True if there is a collision, false otherwise.
- */
-function playerCollidesWithBoundary({ circle, boundary }) {
-    return (
-        circle.position.y - circle.radius + circle.velocity.y <= boundary.position.y + boundary.height &&
-        circle.position.x + circle.radius + circle.velocity.x >= boundary.position.x &&
-        circle.position.y + circle.radius + circle.velocity.y >= boundary.position.y &&
-        circle.position.x - circle.radius + circle.velocity.x <= boundary.position.x + boundary.width)
-}
-
-/**
- * This function creates a JS image object and sets its source to the passed value.
- * @param src A string containing the image path.
- * @returns {HTMLImageElement} Image object containing the passed image source.
- */
-function createImage(src) {
-    const image = new Image();
-    image.src = src;
-    return image;
-}
 
 
 function init() {
@@ -339,7 +277,7 @@ function animate() {
             const boundary = boundaries[i]; // Current boundary
 
             // Player and boundary collision
-            if (playerCollidesWithBoundary({circle: {...player, velocity: { x: 0, y: -5 }}, boundary: boundary})) {
+            if (checkCollision({circle: {...player, velocity: { x: 0, y: -5 }}, boundary: boundary})) {
                 player.velocity.y = 0;
                 break;
             } else {
@@ -352,7 +290,7 @@ function animate() {
             const boundary = boundaries[i]; // Current boundary
 
             // If there is a collision
-            if (playerCollidesWithBoundary({
+            if (checkCollision({
                 circle: {
                     ...player,
                     velocity: {
@@ -374,7 +312,7 @@ function animate() {
             const boundary = boundaries[i]; // Current boundary
 
             // If there is a player - boundary collision.
-            if (playerCollidesWithBoundary({
+            if (checkCollision({
                 circle: {
                     ...player,
                     velocity: {
@@ -395,7 +333,7 @@ function animate() {
         for (let i = 0; i < boundaries.length; i++) {
             const boundary = boundaries[i]; // Current boundary
 
-            if (playerCollidesWithBoundary({
+            if (checkCollision({
                 circle: {
                     ...player,
                     velocity: {
@@ -435,10 +373,116 @@ function animate() {
         boundary.draw();
 
         // Player and boundary collision detection
-        if (playerCollidesWithBoundary({ circle: player, boundary: boundary })) {
+        if (checkCollision({ circle: player, boundary: boundary })) {
 
             player.velocity.x = 0;
             player.velocity.y = 0;
+        }
+    });
+
+    ghosts.forEach((ghost) => {
+        ghost.update();
+        const collisions = [];
+
+        boundaries.forEach((boundary) => {
+            // Ghost collides with boundary
+            if (!collisions.includes('right') &&
+                checkCollision({
+                    circle: {
+                        ...ghost,
+                        velocity: {
+                            x: 5,
+                            y: 0
+                        }
+                    },
+                    boundary: boundary
+            })) {
+                collisions.push('right');
+            }
+            if (!collisions.includes('left') &&
+                checkCollision({
+                    circle: {
+                        ...ghost,
+                        velocity: {
+                            x: -5,
+                            y: 0
+                        }
+                    },
+                    boundary: boundary
+            })) {
+                collisions.push('left');
+            }
+            if (!collisions.includes('up') &&
+                checkCollision({
+                    circle: {
+                        ...ghost,
+                        velocity: {
+                            x: 0,
+                            y: -5
+                        }
+                    },
+                    boundary: boundary
+            })) {
+                collisions.push('up');
+            }
+            if (!collisions.includes('down') &&
+                checkCollision({
+                    circle: {
+                        ...ghost,
+                        velocity: {
+                            x: 0,
+                            y: 5
+                        }
+                    },
+                    boundary: boundary
+            })) {
+                collisions.push('down');
+            }
+        });
+
+        if (collisions.length > ghost.prevCollisions.length) {
+            ghost.prevCollisions = collisions;
+        }
+
+        if (JSON.stringify(collisions) !== JSON.stringify(ghost.prevCollisions)) {
+
+            if (ghost.velocity.x > 0) {
+                ghost.prevCollisions.push('right')
+            } else if (ghost.velocity.x < 0) {
+                ghost.prevCollisions.push('left')
+            } else if (ghost.velocity.y < 0) {
+                ghost.prevCollisions.push('up')
+            } else if (ghost.velocity.y > 0) {
+                ghost.prevCollisions.push('down')
+            }
+            let pathways = ghost.prevCollisions.filter(collision => {
+                return !collisions.includes(collision);
+            });
+            console.log({pathways})
+
+            const direction = pathways[Math.floor(Math.random() * pathways.length)];
+
+            console.log({direction})
+
+            switch (direction) {
+                case 'down':
+                    ghost.velocity.y = 3;
+                    ghost.velocity.x = 0;
+                    break;
+                case 'up':
+                    ghost.velocity.y = -3;
+                    ghost.velocity.x = 0;
+                    break;
+                case 'left':
+                    ghost.velocity.y = 0;
+                    ghost.velocity.x = -3;
+                    break;
+                case 'right':
+                    ghost.velocity.y = 0;
+                    ghost.velocity.x = 3;
+                    break;
+            }
+            ghost.prevCollisions = []; // Resetting the values after each iteration for the next iteration
         }
     });
 
