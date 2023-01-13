@@ -10,7 +10,8 @@ addEventListener('resize', () => {
 
     init();
 });
-addEventListener("keydown", ({key}) => {
+
+addEventListener("keydown", ({ key }) => {
     switch (key) {
         case 'w':
             keys.w.pressed = true;
@@ -30,7 +31,8 @@ addEventListener("keydown", ({key}) => {
             break;
     }
 });
-addEventListener("keyup", ({key}) => {
+
+addEventListener("keyup", ({ key }) => {
     switch (key) {
         case 'w':
             keys.w.pressed = false;
@@ -47,42 +49,6 @@ addEventListener("keyup", ({key}) => {
     }
 });
 
-class Boundary {
-    static width = 40;
-    static height = 40;
-    constructor({ position, image }) {
-        this.position = position;
-        this.width = Boundary.width;
-        this.height = Boundary.height;
-        this.image = image;
-    }
-
-    draw() {
-        ctx.drawImage(this.image, this.position.x, this.position.y);
-    }
-}
-
-class Player {
-    constructor({ position, velocity }) {
-        this.position = position;
-        this.velocity = velocity;
-        this.radius = 15;
-    }
-
-    draw() {
-        ctx.beginPath();
-        ctx.fillStyle = 'yellow';
-        ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2, false);
-        ctx.fill();
-        ctx.closePath();
-    }
-
-    update() {
-        this.draw();
-        this.position.x += this.velocity.x;
-        this.position.y += this.velocity.y;
-    }
-}
 
 const keys = {
     w: {
@@ -103,20 +69,22 @@ let lastKeyPressed = ''; // To track the previously pressed key.
 // Map structure to be generated.
 const map = [
     ['1', '-', '-', '-', '-', '-', '-', '-', '-', '-', '2'],
-    ['|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
-    ['|', ' ', 'b', ' ', '[', '^', ']', ' ', 'b', ' ', '|'],
-    ['|', ' ', ' ', ' ', ' ', 'u', ' ', ' ', ' ', ' ', '|'],
-    ['|', ' ', '[', ']', ' ', ' ', ' ', '[', ']', ' ', '|'],
-    ['|', ' ', ' ', ' ', ' ', 'n', ' ', ' ', ' ', ' ', '|'],
-    ['|', ' ', 'b', ' ', '[', '+', ']', ' ', 'b', ' ', '|'],
-    ['|', ' ', ' ', ' ', ' ', 'u', ' ', ' ', ' ', ' ', '|'],
-    ['|', ' ', '[', ']', ' ', ' ', ' ', '[', ']', ' ', '|'],
-    ['|', ' ', ' ', ' ', ' ', 'n', ' ', ' ', ' ', ' ', '|'],
-    ['|', ' ', 'b', ' ', '[', '_', ']', ' ', 'b', ' ', '|'],
-    ['|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
+    ['|', '.', '.', '.', '.', '.', '.', '.', '.', '.', '|'],
+    ['|', '.', 'b', '.', '[', '^', ']', '.', 'b', '.', '|'],
+    ['|', '.', '.', '.', '.', 'u', '.', '.', '.', '.', '|'],
+    ['|', '.', '[', ']', '.', '.', '.', '[', ']', '.', '|'],
+    ['|', '.', '.', '.', '.', 'n', '.', '.', '.', '.', '|'],
+    ['|', '.', 'b', '.', '[', '+', ']', '.', 'b', '.', '|'],
+    ['|', '.', '.', '.', '.', 'u', '.', '.', '.', '.', '|'],
+    ['|', '.', '[', ']', '.', '.', '.', '[', ']', '.', '|'],
+    ['|', '.', '.', '.', '.', 'n', '.', '.', '.', '.', '|'],
+    ['|', '.', 'b', '.', '[', '_', ']', '.', 'b', '.', '|'],
+    ['|', '.', '.', '.', '.', '.', '.', '.', '.', '.', '|'],
     ['4', '-', '-', '-', '-', '-', '-', '-', '-', '-', '3']
-]
+];
+
 let boundaries = [];
+let pellets = [];
 
 const player = new Player({
     position: {
@@ -145,7 +113,9 @@ function createImage(src) {
 
 
 function init() {
+    // Reset variables
     boundaries = [];
+    pellets = [];
 
     // Procedurally generate map.
     map.forEach((row, rowIndex) => { // Each column in the grid
@@ -327,6 +297,16 @@ function init() {
                         })
                     );
                     break;
+                case '.':
+                    pellets.push(
+                        new Pellet({
+                            position: {
+                                x: symbolIndex * Boundary.width,
+                                y: rowIndex * Boundary.height
+                            }
+                        })
+                    );
+                    break;
             }
         });
     });
@@ -414,6 +394,12 @@ function animate() {
                 player.velocity.x = 5;
             }
         }
+    }
+
+    for (let i = 0; i < pellets.length; i++) {
+        const pellet = pellets[i];
+
+        pellet.draw();
     }
 
     // Looping through all the boundaries and drawing them onto the canvas.
