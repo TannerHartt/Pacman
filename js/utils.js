@@ -7,7 +7,7 @@ let lastKeyPressed = ''; // To track the previously pressed key.
  * @returns {boolean} True if there is a collision, false otherwise.
  */
 function checkCollision({ circle, boundary }) {
-    const padding = Boundary.width / 2 - circle.radius - 1
+    const padding = Boundary.width / 2 - circle.radius - 2;
     return (
         circle.position.y - circle.radius + circle.velocity.y <= boundary.position.y + boundary.height + padding &&
         circle.position.x + circle.radius + circle.velocity.x >= boundary.position.x - padding &&
