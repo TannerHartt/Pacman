@@ -2,16 +2,17 @@ let lastKeyPressed = ''; // To track the previously pressed key.
 
 /**
  * This function checks collisions between two objects within the canvas and returns a boolean.
- * @param circle The circular object to track (Player).
+ * @param circle The circular object to track (Player or Ghost).
  * @param boundary The rectangular object to track (Boundaries).
  * @returns {boolean} True if there is a collision, false otherwise.
  */
 function checkCollision({ circle, boundary }) {
+    const padding = Boundary.width / 2 - circle.radius - 1
     return (
-        circle.position.y - circle.radius + circle.velocity.y <= boundary.position.y + boundary.height &&
-        circle.position.x + circle.radius + circle.velocity.x >= boundary.position.x &&
-        circle.position.y + circle.radius + circle.velocity.y >= boundary.position.y &&
-        circle.position.x - circle.radius + circle.velocity.x <= boundary.position.x + boundary.width)
+        circle.position.y - circle.radius + circle.velocity.y <= boundary.position.y + boundary.height + padding &&
+        circle.position.x + circle.radius + circle.velocity.x >= boundary.position.x - padding &&
+        circle.position.y + circle.radius + circle.velocity.y >= boundary.position.y - padding &&
+        circle.position.x - circle.radius + circle.velocity.x <= boundary.position.x + boundary.width + padding)
 }
 
 /**
@@ -28,7 +29,7 @@ function createImage(src) {
 /**
  * This function takes in a map design in the form of a 2D array and parses each element and
  * decodes the symbols it contains - drawing the corresponding map junction piece image.
- * @param map 2D array containing symbols indicating the map design.
+ * @param map 2D array containing symbols indicating the map design and food pellets.
  */
 function generateMap(map) {
     // Procedurally generate map.
@@ -270,3 +271,4 @@ addEventListener("keyup", ({ key }) => {
             break;
     }
 });
+
