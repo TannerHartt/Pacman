@@ -19,20 +19,34 @@ class Player {
         this.position = position;
         this.velocity = velocity;
         this.radius = 15;
+        this.radians = 0.75;
+        this.chompSpeed = 0.08;
+        this.rotation = 0;
     }
 
     draw() {
+        ctx.save();
+        ctx.translate(this.position.x, this.position.y);
+        ctx.rotate(this.rotation);
+        ctx.translate(-this.position.x, -this.position.y);
         ctx.beginPath();
         ctx.fillStyle = 'yellow';
-        ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2, false);
+        ctx.arc(this.position.x, this.position.y, this.radius, this.radians, Math.PI * 2 - this.radians, false);
+        ctx.lineTo(this.position.x, this.position.y, )
         ctx.fill();
         ctx.closePath();
+        ctx.restore();
     }
 
     update() {
         this.draw();
         this.position.x += this.velocity.x;
         this.position.y += this.velocity.y;
+
+        if (this.radians < 0 || this.radians > 0.75) {
+            this.chompSpeed = -this.chompSpeed;
+        }
+        this.radians += this.chompSpeed;
     }
 }
 
