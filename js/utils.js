@@ -222,6 +222,16 @@ function generateMap(map) {
                         })
                     );
                     break; // Food pellet
+                case 'p':
+                    powerUps.push(
+                        new PowerUp({
+                            position: {
+                                x: symbolIndex * Boundary.width + Boundary.width / 2,
+                                y: rowIndex * Boundary.height + Boundary.height / 2
+                            }
+                        })
+                    );
+                    break; // Power-up
             }
         });
     });
