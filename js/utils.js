@@ -25,6 +25,207 @@ function createImage(src) {
     return image;
 }
 
+/**
+ * This function takes in a map design in the form of a 2D array and parses each element and
+ * decodes the symbols it contains - drawing the corresponding map junction piece image.
+ * @param map 2D array containing symbols indicating the map design.
+ */
+function generateMap(map) {
+    // Procedurally generate map.
+    map.forEach((row, rowIndex) => { // Each row in the grid
+        row.forEach((symbol, symbolIndex) => { // Each column in the grid
+            switch (symbol) { // Load a different image depending on the grid symbol.
+                case '-':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * symbolIndex,
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/pipeHorizontal.png')
+                        })
+                    );
+                    break;
+                case '|':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * symbolIndex,
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/pipeVertical.png')
+                        })
+                    );
+                    break;
+                case '1':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * symbolIndex,
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/pipeCorner1.png')
+                        })
+                    );
+                    break;
+                case '2':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * symbolIndex,
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/pipeCorner2.png')
+                        })
+                    );
+                    break;
+                case '3':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * symbolIndex,
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/pipeCorner3.png')
+                        })
+                    );
+                    break;
+                case '4':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * symbolIndex,
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/pipeCorner4.png')
+                        })
+                    );
+                    break;
+                case 'b':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * symbolIndex,
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/block.png')
+                        })
+                    );
+                    break;
+                case '[':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * symbolIndex,
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/capLeft.png')
+                        })
+                    );
+                    break;
+                case ']':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * symbolIndex,
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/capRight.png')
+                        })
+                    );
+                    break;
+                case 'u':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * symbolIndex,
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/capBottom.png')
+                        })
+                    );
+                    break;
+                case 'n':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * symbolIndex,
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/capTop.png')
+                        })
+                    );
+                    break;
+                case '+':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * symbolIndex,
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/pipeCross.png')
+                        })
+                    );
+                    break;
+                case '_':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * symbolIndex,
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/pipeConnectorTop.png')
+                        })
+                    );
+                    break;
+                case '^':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * symbolIndex,
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/pipeConnectorBottom.png')
+                        })
+                    );
+                    break;
+                case '<':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * symbolIndex,
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/pipeConnectorRight.png')
+                        })
+                    );
+                    break;
+                case '>':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * symbolIndex,
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/pipeConnectorLeft.png')
+                        })
+                    );
+                    break;
+                case '.':
+                    pellets.push(
+                        new Pellet({
+                            position: {
+                                x: symbolIndex * Boundary.width + Boundary.width / 2,
+                                y: rowIndex * Boundary.height + Boundary.height / 2
+                            }
+                        })
+                    );
+                    break;
+            }
+        });
+    });
+}
+
 addEventListener('resize', () => {
     canvas.height = innerHeight;
     canvas.width = innerWidth;
@@ -52,6 +253,7 @@ addEventListener("keydown", ({ key }) => {
             break;
     }
 });
+
 addEventListener("keyup", ({ key }) => {
     switch (key) {
         case 'w':
