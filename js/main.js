@@ -242,13 +242,15 @@ function animate() {
     }
 
     // Win condition
-    if (pellets.length === 0) {
-        cancelAnimationFrame(animationId);
+    if (pellets.length === 0) { // Player collects all pellets
+        setTimeout(() => {
+            cancelAnimationFrame(animationId); // Stop animation;
+        }, 500); // .5s after player collects all pellets.
     }
 
     // Looping through all the boundaries and drawing them onto the canvas.
     boundaries.forEach((boundary) => {
-        boundary.draw();
+        boundary.draw(); // Draw each individual boundary object onto the canvas.
 
         // Player and boundary collision detection
         if (checkCollision({ circle: player, boundary: boundary })) {
@@ -363,7 +365,18 @@ function animate() {
         }
     });
 
-}
+    // Rotates the player animation to the direction its moving.
+    if (player.velocity.x > 0) {
+        player.rotation = 0;
+    } else if (player.velocity.x < 0) {
+        player.rotation = Math.PI;
+    } else if (player.velocity.y > 0) {
+        player.rotation = Math.PI / 2;
+    } else if (player.velocity.y < 0) {
+        player.rotation = Math.PI * 1.5;
+    }
+
+} // End of animate
 
 init();
 animate();
