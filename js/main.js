@@ -64,7 +64,6 @@ const keys = {
         pressed: false
     }
 }
-let lastKeyPressed = ''; // To track the previously pressed key.
 
 // Map structure to be generated.
 const map = [
@@ -85,6 +84,8 @@ const map = [
 
 let boundaries = [];
 let pellets = [];
+let lastKeyPressed = ''; // To track the previously pressed key.
+
 
 const player = new Player({
     position: {
@@ -286,7 +287,7 @@ function init() {
                         })
                     );
                     break;
-                case 'k':
+                case '<':
                     boundaries.push(
                         new Boundary({
                             position: {
@@ -297,7 +298,7 @@ function init() {
                         })
                     );
                     break;
-                case 'I':
+                case '>':
                     boundaries.push(
                         new Boundary({
                             position: {
@@ -312,8 +313,8 @@ function init() {
                     pellets.push(
                         new Pellet({
                             position: {
-                                x: symbolIndex * Boundary.width,
-                                y: rowIndex * Boundary.height
+                                x: symbolIndex * Boundary.width + Boundary.width / 2,
+                                y: rowIndex * Boundary.height + Boundary.height / 2
                             }
                         })
                     );
@@ -328,6 +329,7 @@ function animate() {
     ctx.clearRect(0, 0 , canvas.width, canvas.height);
 
     // Dynamic key listeners to support multiple buttons pressed.
+    // Continuously checks collisions while key is pressed.
     if (keys.w.pressed && lastKeyPressed === 'w') {
         for (let i = 0; i < boundaries.length; i++) {
             const boundary = boundaries[i]; // Current boundary
@@ -408,10 +410,10 @@ function animate() {
         }
     }
 
-    for (let i = 0; i < pellets.length; i++) {
+    for (let i = pellets.length - 1; i >= 0; i--) {
         const pellet = pellets[i];
-
         pellet.draw();
+
     }
 
     // Looping through all the boundaries and drawing them onto the canvas.
