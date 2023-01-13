@@ -5,8 +5,6 @@ const scoreEl = document.getElementById('scoreEl');
 canvas.height = innerHeight;
 canvas.width = innerWidth;
 
-
-
 const keys = {
     w: {
         pressed: false
@@ -255,13 +253,13 @@ function animate() {
         if (JSON.stringify(collisions) !== JSON.stringify(ghost.prevCollisions)) {
 
             if (ghost.velocity.x > 0) {
-                ghost.prevCollisions.push('right')
+                ghost.prevCollisions.push('right');
             } else if (ghost.velocity.x < 0) {
-                ghost.prevCollisions.push('left')
+                ghost.prevCollisions.push('left');
             } else if (ghost.velocity.y < 0) {
-                ghost.prevCollisions.push('up')
+                ghost.prevCollisions.push('up');
             } else if (ghost.velocity.y > 0) {
-                ghost.prevCollisions.push('down')
+                ghost.prevCollisions.push('down');
             }
             let pathways = ghost.prevCollisions.filter(collision => {
                 return !collisions.includes(collision);
