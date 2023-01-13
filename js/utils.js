@@ -45,7 +45,7 @@ function generateMap(map) {
                             image: createImage('./img/pipeHorizontal.png')
                         })
                     );
-                    break;
+                    break; // Horizontal pipe
                 case '|':
                     boundaries.push(
                         new Boundary({
@@ -56,7 +56,7 @@ function generateMap(map) {
                             image: createImage('./img/pipeVertical.png')
                         })
                     );
-                    break;
+                    break; // Vertical pipe
                 case '1':
                     boundaries.push(
                         new Boundary({
@@ -67,7 +67,7 @@ function generateMap(map) {
                             image: createImage('./img/pipeCorner1.png')
                         })
                     );
-                    break;
+                    break; // Top left corner
                 case '2':
                     boundaries.push(
                         new Boundary({
@@ -78,7 +78,7 @@ function generateMap(map) {
                             image: createImage('./img/pipeCorner2.png')
                         })
                     );
-                    break;
+                    break; // Top right corner
                 case '3':
                     boundaries.push(
                         new Boundary({
@@ -89,7 +89,7 @@ function generateMap(map) {
                             image: createImage('./img/pipeCorner3.png')
                         })
                     );
-                    break;
+                    break; // Bottom right corner
                 case '4':
                     boundaries.push(
                         new Boundary({
@@ -100,7 +100,7 @@ function generateMap(map) {
                             image: createImage('./img/pipeCorner4.png')
                         })
                     );
-                    break;
+                    break; // Bottom left corner
                 case 'b':
                     boundaries.push(
                         new Boundary({
@@ -111,7 +111,7 @@ function generateMap(map) {
                             image: createImage('./img/block.png')
                         })
                     );
-                    break;
+                    break; // 4-sided block
                 case '[':
                     boundaries.push(
                         new Boundary({
@@ -122,7 +122,7 @@ function generateMap(map) {
                             image: createImage('./img/capLeft.png')
                         })
                     );
-                    break;
+                    break; // Left cap
                 case ']':
                     boundaries.push(
                         new Boundary({
@@ -133,7 +133,7 @@ function generateMap(map) {
                             image: createImage('./img/capRight.png')
                         })
                     );
-                    break;
+                    break; // Right cap
                 case 'u':
                     boundaries.push(
                         new Boundary({
@@ -144,7 +144,7 @@ function generateMap(map) {
                             image: createImage('./img/capBottom.png')
                         })
                     );
-                    break;
+                    break; // Bottom cap
                 case 'n':
                     boundaries.push(
                         new Boundary({
@@ -155,7 +155,7 @@ function generateMap(map) {
                             image: createImage('./img/capTop.png')
                         })
                     );
-                    break;
+                    break; // Top cap
                 case '+':
                     boundaries.push(
                         new Boundary({
@@ -166,7 +166,7 @@ function generateMap(map) {
                             image: createImage('./img/pipeCross.png')
                         })
                     );
-                    break;
+                    break; // 4-way cross-section
                 case '_':
                     boundaries.push(
                         new Boundary({
@@ -177,7 +177,7 @@ function generateMap(map) {
                             image: createImage('./img/pipeConnectorTop.png')
                         })
                     );
-                    break;
+                    break; // 3-way upward facing edge pipe
                 case '^':
                     boundaries.push(
                         new Boundary({
@@ -188,7 +188,7 @@ function generateMap(map) {
                             image: createImage('./img/pipeConnectorBottom.png')
                         })
                     );
-                    break;
+                    break; // 3-way downward facing edge pipe
                 case '<':
                     boundaries.push(
                         new Boundary({
@@ -199,7 +199,7 @@ function generateMap(map) {
                             image: createImage('./img/pipeConnectorRight.png')
                         })
                     );
-                    break;
+                    break; // 3-way right facing edge pipe
                 case '>':
                     boundaries.push(
                         new Boundary({
@@ -210,7 +210,7 @@ function generateMap(map) {
                             image: createImage('./img/pipeConnectorLeft.png')
                         })
                     );
-                    break;
+                    break; // 3-wy left facing edge pipe
                 case '.':
                     pellets.push(
                         new Pellet({
@@ -220,7 +220,7 @@ function generateMap(map) {
                             }
                         })
                     );
-                    break;
+                    break; // Food pellet
             }
         });
     });
