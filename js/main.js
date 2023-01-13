@@ -30,7 +30,7 @@ const map1 = [
     ['|', '.', '.', '.', '.', 'n', '.', '.', '.', '.', '|'],
     ['|', '.', 'b', '.', '[', '+', ']', '.', 'b', '.', '|'],
     ['|', '.', '.', '.', '.', 'u', '.', '.', '.', '.', '|'],
-    ['|', '.', '[', ']', '.', '.', '.', '[', ']', '.', '|'],
+    ['|', '.', '[', ']', '.', 'p', '.', '[', ']', '.', '|'],
     ['|', '.', '.', '.', '.', 'n', '.', '.', '.', '.', '|'],
     ['|', '.', 'b', '.', '[', '_', ']', '.', 'b', '.', '|'],
     ['|', '.', '.', '.', '.', '.', '.', '.', '.', '.', '|'],
@@ -42,6 +42,7 @@ let boundaries = [];
 let pellets = [];
 let score = 0;
 let ghosts = [];
+let powerUps = [];
 
 const player = new Player({
     position: {
@@ -59,6 +60,7 @@ function init() {
     // Reset variables
     boundaries = [];
     pellets = [];
+    powerUps = [];
     ghosts = [
         new Ghost({
             position: {
@@ -69,6 +71,17 @@ function init() {
                 x: Ghost.speed,
                 y: 0
             }
+        }),
+        new Ghost({
+            position: {
+                x: (Boundary.width * 6) + Boundary.width / 2,
+                y: (Boundary.height * 5) + Boundary.height / 2
+            },
+            velocity: {
+                x: Ghost.speed,
+                y: 0
+            },
+            color: 'pink'
         })
     ];
     score = 0;
@@ -171,8 +184,49 @@ function animate() {
         }
     }
 
+    // Detect collision between ghost and player
+    for (let i = ghosts.length - 1; i >= 0; i--) {
+        const ghost = ghosts[i]; // Individual ghost
+
+        // Game over, ghost touches player
+        if (Math.hypot( // Collision detection for circular objects
+                ghost.position.x - player.position.x,
+                ghost.position.y - player.position.y) < player.radius + ghost.radius
+        ) {
+            if (ghost.scared) {
+                ghosts.splice(i, 1);
+            } else {
+                cancelAnimationFrame(animationId);
+            }
+        }
+    }
+
+
+    // Animating power-ups
+    for (let i = powerUps.length - 1; i >= 0; i--) {
+        const powerUp = powerUps[i];
+        powerUp.draw();
+
+        // Circle to circle collision detection (player - pellet).
+        if (Math.hypot( // Player collides with power-up
+            powerUp.position.x - player.position.x,
+            powerUp.position.y - player.position.y) < player.radius + powerUp.radius
+        ) {
+            powerUps.splice(i, 1); // Remove it from computation
+
+            // Make ghosts scared.
+            ghosts.forEach(ghost => {
+               ghost.scared = true;
+               setTimeout(() => {
+                   ghost.scared = false;
+               }, 6000); // 6s
+            });
+
+        }
+    }
+
     // Animating pellets
-    for (let i = pellets.length - 1; i > 0; i--) {
+    for (let i = pellets.length - 1; i >= 0; i--) {
         const pellet = pellets[i];
         pellet.draw();
 
@@ -185,6 +239,11 @@ function animate() {
             score += 5;
             scoreEl.innerHTML = score;
         }
+    }
+
+    // Win condition
+    if (pellets.length === 0) {
+        cancelAnimationFrame(animationId);
     }
 
     // Looping through all the boundaries and drawing them onto the canvas.
@@ -202,9 +261,9 @@ function animate() {
 
     ghosts.forEach((ghost) => {
         ghost.update();
+
         const collisions = [];
 
-        // Verified
         boundaries.forEach((boundary) => {
 
             // Ghost collides with boundary
