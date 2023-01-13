@@ -14,6 +14,7 @@ class Boundary {
 }
 
 class Player {
+    static speed = 4;
     constructor({ position, velocity }) {
         this.position = position;
         this.velocity = velocity;
@@ -51,15 +52,15 @@ class Pellet {
 }
 
 class Ghost {
-    static speed = 2
+    static speed = 2;
     constructor({ position, velocity, color = 'red' }) {
         this.position = position;
         this.velocity = velocity;
         this.radius = 15;
         this.color = color;
         this.prevCollisions = [];
-        this.speed = 2
-        this.scared = false
+        this.speed = Ghost.speed;
+        this.scared = false;
     }
 
     draw() {
