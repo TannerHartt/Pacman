@@ -97,6 +97,12 @@ const player = new Player({
      }
 });
 
+/**
+ * This function checks collisions between two objects within the canvas and returns a boolean.
+ * @param circle The circular object to track (Player).
+ * @param boundary The rectangular object to track (Boundaries).
+ * @returns {boolean} True if there is a collision, false otherwise.
+ */
 function playerCollidesWithBoundary({ circle, boundary }) {
     return (
         circle.position.y - circle.radius + circle.velocity.y <= boundary.position.y + boundary.height &&
@@ -105,6 +111,11 @@ function playerCollidesWithBoundary({ circle, boundary }) {
         circle.position.x - circle.radius + circle.velocity.x <= boundary.position.x + boundary.width)
 }
 
+/**
+ * This function creates a JS image object and sets its source to the passed value.
+ * @param src A string containing the image path.
+ * @returns {HTMLImageElement} Image object containing the passed image source.
+ */
 function createImage(src) {
     const image = new Image();
     image.src = src;
@@ -321,6 +332,7 @@ function animate() {
         for (let i = 0; i < boundaries.length; i++) {
             const boundary = boundaries[i]; // Current boundary
 
+            // Player and boundary collision
             if (playerCollidesWithBoundary({circle: {...player, velocity: { x: 0, y: -5 }}, boundary: boundary})) {
                 player.velocity.y = 0;
                 break;
@@ -415,9 +427,7 @@ function animate() {
     });
 
     player.update();
-
 }
-
 
 init();
 animate();
