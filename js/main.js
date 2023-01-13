@@ -40,16 +40,18 @@ const map1 = [
 let boundaries = [];
 let pellets = [];
 let score = 0;
-let ghosts = [new Ghost({
-    position: {
-        x: (Boundary.width * 6) + Boundary.width / 2,
-        y: Boundary.height + Boundary.height / 2
-    },
-    velocity: {
-        x: 3,
-        y: 0
-    }
-})];
+let ghosts = [
+    new Ghost({
+        position: {
+            x: (Boundary.width * 6) + Boundary.width / 2,
+            y: Boundary.height + Boundary.height / 2
+        },
+        velocity: {
+            x: Ghost.speed,
+            y: 0
+        }
+    })
+];
 
 const player = new Player({
     position: {
@@ -180,24 +182,27 @@ function animate() {
 
         // Player and boundary collision detection
         if (checkCollision({ circle: player, boundary: boundary })) {
-
             player.velocity.x = 0;
             player.velocity.y = 0;
         }
     });
 
+    player.update();
+
     ghosts.forEach((ghost) => {
         ghost.update();
         const collisions = [];
 
+        // Verified
         boundaries.forEach((boundary) => {
+
             // Ghost collides with boundary
             if (!collisions.includes('right') &&
                 checkCollision({
                     circle: {
                         ...ghost,
                         velocity: {
-                            x: 5,
+                            x: ghost.speed,
                             y: 0
                         }
                     },
@@ -210,7 +215,7 @@ function animate() {
                     circle: {
                         ...ghost,
                         velocity: {
-                            x: -5,
+                            x: -ghost.speed,
                             y: 0
                         }
                     },
@@ -224,7 +229,7 @@ function animate() {
                         ...ghost,
                         velocity: {
                             x: 0,
-                            y: -5
+                            y: -ghost.speed
                         }
                     },
                     boundary: boundary
@@ -237,7 +242,7 @@ function animate() {
                         ...ghost,
                         velocity: {
                             x: 0,
-                            y: 5
+                            y: ghost.speed
                         }
                     },
                     boundary: boundary
@@ -246,53 +251,48 @@ function animate() {
             }
         });
 
+
         if (collisions.length > ghost.prevCollisions.length) {
             ghost.prevCollisions = collisions;
         }
 
         if (JSON.stringify(collisions) !== JSON.stringify(ghost.prevCollisions)) {
 
-            if (ghost.velocity.x > 0) {
-                ghost.prevCollisions.push('right');
-            } else if (ghost.velocity.x < 0) {
-                ghost.prevCollisions.push('left');
-            } else if (ghost.velocity.y < 0) {
-                ghost.prevCollisions.push('up');
-            } else if (ghost.velocity.y > 0) {
-                ghost.prevCollisions.push('down');
-            }
+            if (ghost.velocity.x > 0) ghost.prevCollisions.push('right');
+            else if (ghost.velocity.x < 0) ghost.prevCollisions.push('left');
+            else if (ghost.velocity.y < 0) ghost.prevCollisions.push('up');
+            else if (ghost.velocity.y > 0) ghost.prevCollisions.push('down');
+
+
             let pathways = ghost.prevCollisions.filter(collision => {
                 return !collisions.includes(collision);
             });
-            console.log({pathways})
 
-            const direction = pathways[Math.floor(Math.random() * pathways.length)];
-
-            console.log({direction})
+            let direction = pathways[Math.floor(Math.random() * pathways.length)];
 
             switch (direction) {
                 case 'down':
-                    ghost.velocity.y = 3;
+                    ghost.velocity.y = ghost.speed;
                     ghost.velocity.x = 0;
                     break;
                 case 'up':
-                    ghost.velocity.y = -3;
+                    ghost.velocity.y = -ghost.speed;
                     ghost.velocity.x = 0;
                     break;
                 case 'left':
                     ghost.velocity.y = 0;
-                    ghost.velocity.x = -3;
+                    ghost.velocity.x = -ghost.speed;
                     break;
                 case 'right':
                     ghost.velocity.y = 0;
-                    ghost.velocity.x = 3;
+                    ghost.velocity.x = ghost.speed;
                     break;
             }
             ghost.prevCollisions = []; // Resetting the values after each iteration for the next iteration
+
         }
     });
 
-    player.update();
 }
 
 init();
