@@ -102,15 +102,20 @@ let lastKeyPressed = ''; // To track the previously pressed key.
 
 // Map structure to be generated.
 const map = [
-    ['1', '-', '-', '-', '-', '-', '2'],
-    ['|', ' ', ' ', ' ', ' ', ' ', '|'],
-    ['|', ' ', 'b', ' ', 'b', ' ', '|'],
-    ['|', ' ', ' ', ' ', ' ', ' ', '|'],
-    ['|', ' ', 'b', ' ', 'b', ' ', '|'],
-    ['|', ' ', ' ', ' ', ' ', ' ', '|'],
-    ['4', '-', '-', '-', '-', '-', '3'],
-
-];
+    ['1', '-', '-', '-', '-', '-', '-', '-', '-', '-', '2'],
+    ['|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
+    ['|', ' ', 'b', ' ', '[', '^', ']', ' ', 'b', ' ', '|'],
+    ['|', ' ', ' ', ' ', ' ', 'u', ' ', ' ', ' ', ' ', '|'],
+    ['|', ' ', '[', ']', ' ', ' ', ' ', '[', ']', ' ', '|'],
+    ['|', ' ', ' ', ' ', ' ', 'n', ' ', ' ', ' ', ' ', '|'],
+    ['|', ' ', 'b', ' ', '[', '+', ']', ' ', 'b', ' ', '|'],
+    ['|', ' ', ' ', ' ', ' ', 'u', ' ', ' ', ' ', ' ', '|'],
+    ['|', ' ', '[', ']', ' ', ' ', ' ', '[', ']', ' ', '|'],
+    ['|', ' ', ' ', ' ', ' ', 'n', ' ', ' ', ' ', ' ', '|'],
+    ['|', ' ', 'b', ' ', '[', '_', ']', ' ', 'b', ' ', '|'],
+    ['|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
+    ['4', '-', '-', '-', '-', '-', '-', '-', '-', '-', '3']
+]
 let boundaries = [];
 
 const player = new Player({
@@ -143,9 +148,9 @@ function init() {
     boundaries = [];
 
     // Procedurally generate map.
-    map.forEach((row, rowIndex) => {
-        row.forEach((symbol, symbolIndex) => {
-            switch (symbol) {
+    map.forEach((row, rowIndex) => { // Each column in the grid
+        row.forEach((symbol, symbolIndex) => { // Each row in the grid
+            switch (symbol) { // Load a different image depending on the grid symbol.
                 case '-':
                     boundaries.push(
                         new Boundary({
@@ -223,7 +228,105 @@ function init() {
                         })
                     );
                     break;
-
+                case '[':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * symbolIndex,
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/capLeft.png')
+                        })
+                    );
+                    break;
+                case ']':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * symbolIndex,
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/capRight.png')
+                        })
+                    );
+                    break;
+                case 'u':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * symbolIndex,
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/capBottom.png')
+                        })
+                    );
+                    break;
+                case 'n':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * symbolIndex,
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/capTop.png')
+                        })
+                    );
+                    break;
+                case '+':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * symbolIndex,
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/pipeCross.png')
+                        })
+                    );
+                    break;
+                case '_':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * symbolIndex,
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/pipeConnectorTop.png')
+                        })
+                    );
+                    break;
+                case '^':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * symbolIndex,
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/pipeConnectorBottom.png')
+                        })
+                    );
+                    break;
+                case 'k':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * symbolIndex,
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/pipeConnectorRight.png')
+                        })
+                    );
+                    break;
+                case 'I':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * symbolIndex,
+                                y: Boundary.height * rowIndex
+                            },
+                            image: createImage('./img/pipeConnectorLeft.png')
+                        })
+                    );
+                    break;
             }
         });
     });
@@ -245,6 +348,7 @@ function animate() {
                 player.velocity.y = -5;
             }
         }
+
     } else if (keys.a.pressed && lastKeyPressed === 'a') {
         for (let i = 0; i < boundaries.length; i++) {
             const boundary = boundaries[i]; // Current boundary
@@ -266,10 +370,12 @@ function animate() {
                 player.velocity.x = -5;
             }
         }
+
     } else if (keys.s.pressed && lastKeyPressed === 's') {
         for (let i = 0; i < boundaries.length; i++) {
             const boundary = boundaries[i]; // Current boundary
 
+            // If there is a player - boundary collision.
             if (playerCollidesWithBoundary({
                 circle: {
                     ...player,
@@ -286,6 +392,7 @@ function animate() {
                 player.velocity.y = 5;
             }
         }
+        
     } else if (keys.d.pressed && lastKeyPressed === 'd') {
         for (let i = 0; i < boundaries.length; i++) {
             const boundary = boundaries[i]; // Current boundary
