@@ -87,6 +87,7 @@ let boundaries = [];
 let pellets = [];
 let lastKeyPressed = ''; // To track the previously pressed key.
 let score = 0;
+let ghosts = [];
 
 
 const player = new Player({
