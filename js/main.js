@@ -37,21 +37,11 @@ const map1 = [
     ['4', '-', '-', '-', '-', '-', '-', '-', '-', '-', '3']
 ];
 
+let animationId;
 let boundaries = [];
 let pellets = [];
 let score = 0;
-let ghosts = [
-    new Ghost({
-        position: {
-            x: (Boundary.width * 6) + Boundary.width / 2,
-            y: Boundary.height + Boundary.height / 2
-        },
-        velocity: {
-            x: Ghost.speed,
-            y: 0
-        }
-    })
-];
+let ghosts = [];
 
 const player = new Player({
     position: {
@@ -69,13 +59,25 @@ function init() {
     // Reset variables
     boundaries = [];
     pellets = [];
+    ghosts = [
+        new Ghost({
+            position: {
+                x: (Boundary.width * 6) + Boundary.width / 2,
+                y: Boundary.height + Boundary.height / 2
+            },
+            velocity: {
+                x: Ghost.speed,
+                y: 0
+            }
+        })
+    ];
     score = 0;
 
     generateMap(map1);
 }
 
 function animate() {
-    requestAnimationFrame(animate);
+    animationId = requestAnimationFrame(animate);
     ctx.clearRect(0, 0 , canvas.width, canvas.height);
 
     // Dynamic key listeners to support multiple buttons pressed.
@@ -85,11 +87,20 @@ function animate() {
             const boundary = boundaries[i]; // Current boundary
 
             // Player and boundary collision
-            if (checkCollision({circle: {...player, velocity: { x: 0, y: -5 }}, boundary: boundary})) {
+            if (checkCollision({
+                circle: {
+                    ...player,
+                    velocity: {
+                        x: 0,
+                        y: -Player.speed
+                    }
+                },
+                boundary: boundary
+            })) {
                 player.velocity.y = 0;
                 break;
             } else {
-                player.velocity.y = -5;
+                player.velocity.y = -Player.speed;
             }
         }
 
@@ -102,7 +113,7 @@ function animate() {
                 circle: {
                     ...player,
                     velocity: {
-                        x: -5,
+                        x: -Player.speed,
                         y: 0
                     }
                 },
@@ -111,7 +122,7 @@ function animate() {
                 player.velocity.x = 0;
                 break;
             } else {
-                player.velocity.x = -5;
+                player.velocity.x = -Player.speed;
             }
         }
 
@@ -125,7 +136,7 @@ function animate() {
                     ...player,
                     velocity: {
                         x: 0,
-                        y: 5
+                        y: Player.speed
                     }
                 },
                 boundary: boundary
@@ -133,7 +144,7 @@ function animate() {
                 player.velocity.y = 0;
                 break;
             } else {
-                player.velocity.y = 5;
+                player.velocity.y = Player.speed;
             }
         }
         
@@ -145,7 +156,7 @@ function animate() {
                 circle: {
                     ...player,
                     velocity: {
-                        x: 5,
+                        x: Player.speed,
                         y: 0
                     }
                 },
@@ -155,7 +166,7 @@ function animate() {
                 player.velocity.x = 0;
                 break;
             } else {
-                player.velocity.x = 5;
+                player.velocity.x = Player.speed;
             }
         }
     }
