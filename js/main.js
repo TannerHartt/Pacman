@@ -1,5 +1,6 @@
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
+const scoreEl = document.getElementById('scoreEl');
 
 canvas.height = innerHeight;
 canvas.width = innerWidth;
@@ -85,6 +86,7 @@ const map = [
 let boundaries = [];
 let pellets = [];
 let lastKeyPressed = ''; // To track the previously pressed key.
+let score = 0;
 
 
 const player = new Player({
@@ -128,6 +130,7 @@ function init() {
     // Reset variables
     boundaries = [];
     pellets = [];
+    score = 0;
 
     // Procedurally generate map.
     map.forEach((row, rowIndex) => { // Each column in the grid
@@ -410,10 +413,20 @@ function animate() {
         }
     }
 
-    for (let i = pellets.length - 1; i >= 0; i--) {
+    // Animating pellets
+    for (let i = pellets.length - 1; i > 0; i--) {
         const pellet = pellets[i];
         pellet.draw();
 
+        // Circle to circle collision detection (player - pellet).
+        if (Math.hypot(
+            pellet.position.x - player.position.x,
+            pellet.position.y - player.position.y) < player.radius + pellet.radius
+        ) {
+            pellets.splice(i, 1);
+            score += 5;
+            scoreEl.innerHTML = score;
+        }
     }
 
     // Looping through all the boundaries and drawing them onto the canvas.
